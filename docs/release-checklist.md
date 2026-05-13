@@ -18,6 +18,7 @@
 - [x] Add-on preferences provide a global default backup location.
 - [x] Destination Layout supports direct ZIP storage and project subfolder ZIP storage.
 - [x] Destination Layout behavior was user-verified on 2026-05-14.
+- [x] Backup Preview / Dry Run reports target file count, byte count, and planned archive path without creating ZIP files.
 - [x] Optional background worker support is implemented with timer-thread result application.
 - [x] Runtime gate reports detailed `BLENDER_EXE` diagnostics when Blender is not found.
 - [x] Runtime gate detects the Steam Blender install path at `D:\SteamLibrary\steamapps\common\Blender`.
@@ -37,6 +38,8 @@ The initial public GitHub remote is:
 `https://github.com/Sunmax0731/blender-auto-backup`
 
 This repo can be treated as MVP-ready. Blender 5.1.1 runtime gate reports `passed`.
+
+Post-MVP Issue 0013 is also complete in source and docs. The next public package should be released as a later version if these post-MVP changes are published.
 
 GitHub release:
 

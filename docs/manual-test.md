@@ -40,10 +40,13 @@ npm test
 8. `Destination Layout` を `Direct` にする。
 9. `Max Backups` を `2` にする。
 10. `Run in Background` を off にする。
-11. `Backup Now` を押す。
+11. `Preview Backup` を押す。
+12. `Backup Now` を押す。
 
 期待結果:
 
+- `Preview Backup` 直後の `Last` 表示が `Preview:` で始まる
+- `Preview Backup` 直後には ZIP と `.partial` が作成されない
 - `Source Folder\.blender-auto-backup` が作成される
 - `SourceFolderName-yyyymmdd-hhmmss.zip` が作成される
 - ZIP 内に `scene.blend` と `notes.txt` が入っている

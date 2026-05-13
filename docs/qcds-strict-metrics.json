@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-05-14T06:10:51+09:00",
+  "generated_at": "2026-05-14T06:32:08+09:00",
   "project": "blender-auto-backup",
   "ratings": {
     "Quality": "A-",
@@ -46,12 +46,11 @@
       "user-confirmed destination layout behavior",
       "release notes and evidence",
       "GitHub release preparation",
-      "screenshot user guide"
+      "screenshot user guide",
+      "backup preview dry run"
     ],
     "blocked": [],
-    "open_followups": [
-      "MVP後の機能追加とドキュメント改善"
-    ]
+    "open_followups": []
   },
   "artifacts": [
     "dist/blender-auto-backup-0.1.0.zip",

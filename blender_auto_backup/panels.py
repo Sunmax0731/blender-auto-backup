@@ -47,6 +47,7 @@ class BLENDER_AUTO_BACKUP_PT_scene_panel(bpy.types.Panel):
         row.prop(settings, "max_backups")
 
         row = layout.row(align=True)
+        row.operator("blender_auto_backup.preview", icon="VIEWZOOM")
         row.operator("blender_auto_backup.run_now", icon="FILE_TICK")
         if settings.enabled:
             row.operator("blender_auto_backup.stop", icon="PAUSE")

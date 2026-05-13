@@ -33,6 +33,84 @@ class BackupResult:
     deleted_archives: tuple[Path, ...]
 
 
+@dataclass(frozen=True)
+class BackupPlan:
+    source_directory: Path
+    backup_directory: Path
+    archive_path: Path
+    file_count: int
+    byte_count: int
+    created_at: datetime
+    max_backups: int
+    include_patterns: tuple[str, ...]
+    exclude_patterns: tuple[str, ...]
+    excluded_directories: tuple[Path, ...]
+
+
+@dataclass(frozen=True)
+class _BackupContext:
+    source: Path
+    keep: int
+    timestamp: datetime
+    label: str
+    backup_dir: Path
+    excluded_dirs: tuple[Path, ...]
+    include_patterns: tuple[str, ...]
+    exclude_patterns: tuple[str, ...]
+
+
+def plan_backup(
+    *,
+    source_directory: str | os.PathLike[str],
+    backup_directory: str | os.PathLike[str] | None = None,
+    max_backups: int = 20,
+    project_label: str | None = None,
+    created_at: datetime | None = None,
+    include_globs: str | Iterable[str] | None = None,
+    exclude_globs: str | Iterable[str] | None = None,
+    destination_mode: str = DESTINATION_MODE_DIRECT,
+) -> BackupPlan:
+    """Validate settings and count the files a backup would include without writing ZIP data."""
+
+    context = _prepare_backup_context(
+        source_directory=source_directory,
+        backup_directory=backup_directory,
+        max_backups=max_backups,
+        project_label=project_label,
+        created_at=created_at,
+        include_globs=include_globs,
+        exclude_globs=exclude_globs,
+        destination_mode=destination_mode,
+    )
+
+    file_count = 0
+    byte_count = 0
+    for file_path in _iter_source_files(
+        context.source,
+        context.excluded_dirs,
+        include_patterns=context.include_patterns,
+        exclude_patterns=context.exclude_patterns,
+    ):
+        file_count += 1
+        byte_count += file_path.stat().st_size
+
+    if file_count == 0:
+        _raise_no_files_error(context)
+
+    return BackupPlan(
+        source_directory=context.source,
+        backup_directory=context.backup_dir,
+        archive_path=_unique_archive_path(context.backup_dir, context.label, context.timestamp),
+        file_count=file_count,
+        byte_count=byte_count,
+        created_at=context.timestamp,
+        max_backups=context.keep,
+        include_patterns=context.include_patterns,
+        exclude_patterns=context.exclude_patterns,
+        excluded_directories=context.excluded_dirs,
+    )
+
+
 def run_backup(
     *,
     source_directory: str | os.PathLike[str],
@@ -46,22 +124,18 @@ def run_backup(
 ) -> BackupResult:
     """Create a ZIP backup and remove older backups beyond max_backups."""
 
-    source = _resolve_source(source_directory)
-    keep = _validate_keep_count(max_backups)
-    timestamp = created_at or datetime.now()
-    label = _safe_label(project_label or source.name or "project")
-    backup_root, backup_dir = _resolve_backup_target(
-        source,
-        backup_directory,
+    context = _prepare_backup_context(
+        source_directory=source_directory,
+        backup_directory=backup_directory,
+        max_backups=max_backups,
+        project_label=project_label,
+        created_at=created_at,
+        include_globs=include_globs,
+        exclude_globs=exclude_globs,
         destination_mode=destination_mode,
-        label=label,
     )
-    excluded_dirs = _backup_exclusion_roots(source, backup_root, backup_dir)
-    include_patterns = _normalize_globs(include_globs)
-    exclude_patterns = _normalize_globs(exclude_globs)
-
-    backup_dir.mkdir(parents=True, exist_ok=True)
-    archive_path = _unique_archive_path(backup_dir, label, timestamp)
+    context.backup_dir.mkdir(parents=True, exist_ok=True)
+    archive_path = _unique_archive_path(context.backup_dir, context.label, context.timestamp)
     partial_path = archive_path.with_suffix(archive_path.suffix + ".partial")
 
     file_count = 0
@@ -69,32 +143,34 @@ def run_backup(
     try:
         with zipfile.ZipFile(partial_path, "w", compression=zipfile.ZIP_DEFLATED) as archive:
             for file_path in _iter_source_files(
-                source,
-                excluded_dirs,
-                include_patterns=include_patterns,
-                exclude_patterns=exclude_patterns,
+                context.source,
+                context.excluded_dirs,
+                include_patterns=context.include_patterns,
+                exclude_patterns=context.exclude_patterns,
             ):
-                relative = file_path.relative_to(source)
-                archive_name = Path(source.name) / relative
+                relative = file_path.relative_to(context.source)
+                archive_name = Path(context.source.name) / relative
                 archive.write(file_path, archive_name.as_posix())
                 file_count += 1
                 byte_count += file_path.stat().st_size
         if file_count == 0:
-            if include_patterns or exclude_patterns:
-                raise BackupError(f"source folder has no files matching backup filters: {source}")
-            raise BackupError(f"source folder has no files to back up: {source}")
+            _raise_no_files_error(context)
         os.replace(partial_path, archive_path)
     except Exception:
         if partial_path.exists():
             partial_path.unlink()
         raise
 
-    deleted = cleanup_old_backups(backup_dir=backup_dir, label=label, keep=keep)
+    deleted = cleanup_old_backups(
+        backup_dir=context.backup_dir,
+        label=context.label,
+        keep=context.keep,
+    )
     return BackupResult(
         archive_path=archive_path,
         file_count=file_count,
         byte_count=byte_count,
-        created_at=timestamp,
+        created_at=context.timestamp,
         deleted_archives=tuple(deleted),
     )
 
@@ -141,6 +217,45 @@ def cleanup_old_backups(
         archive.unlink()
         deleted.append(archive)
     return deleted
+
+
+def _prepare_backup_context(
+    *,
+    source_directory: str | os.PathLike[str],
+    backup_directory: str | os.PathLike[str] | None,
+    max_backups: int,
+    project_label: str | None,
+    created_at: datetime | None,
+    include_globs: str | Iterable[str] | None,
+    exclude_globs: str | Iterable[str] | None,
+    destination_mode: str,
+) -> _BackupContext:
+    source = _resolve_source(source_directory)
+    keep = _validate_keep_count(max_backups)
+    timestamp = created_at or datetime.now()
+    label = _safe_label(project_label or source.name or "project")
+    backup_root, backup_dir = _resolve_backup_target(
+        source,
+        backup_directory,
+        destination_mode=destination_mode,
+        label=label,
+    )
+    return _BackupContext(
+        source=source,
+        keep=keep,
+        timestamp=timestamp,
+        label=label,
+        backup_dir=backup_dir,
+        excluded_dirs=_backup_exclusion_roots(source, backup_root, backup_dir),
+        include_patterns=_normalize_globs(include_globs),
+        exclude_patterns=_normalize_globs(exclude_globs),
+    )
+
+
+def _raise_no_files_error(context: _BackupContext) -> None:
+    if context.include_patterns or context.exclude_patterns:
+        raise BackupError(f"source folder has no files matching backup filters: {context.source}")
+    raise BackupError(f"source folder has no files to back up: {context.source}")
 
 
 def _resolve_source(source_directory: str | os.PathLike[str]) -> Path:

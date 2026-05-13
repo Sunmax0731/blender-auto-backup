@@ -6,10 +6,57 @@ import tempfile
 import unittest
 import zipfile
 
-from blender_auto_backup.services.backup_service import BackupError, run_backup
+from blender_auto_backup.services.backup_service import BackupError, plan_backup, run_backup
 
 
 class BackupServiceTests(unittest.TestCase):
+    def test_plan_backup_counts_files_without_creating_zip(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_root:
+            root = Path(temp_root)
+            source = root / "work"
+            source.mkdir()
+            (source / "scene.blend").write_bytes(b"blend")
+            (source / "notes.txt").write_text("notes", encoding="utf-8")
+            backup_dir = root / "backups"
+
+            plan = plan_backup(
+                source_directory=source,
+                backup_directory=backup_dir,
+                include_globs="*.blend;*.txt",
+                exclude_globs="notes.txt",
+                created_at=datetime(2026, 5, 14, 12, 0, 0),
+            )
+
+            self.assertEqual(plan.file_count, 1)
+            self.assertEqual(plan.byte_count, 5)
+            self.assertEqual(plan.backup_directory, backup_dir)
+            self.assertEqual(plan.archive_path, backup_dir / "work-20260514-120000.zip")
+            self.assertFalse(backup_dir.exists())
+            self.assertFalse(list(root.rglob("*.zip")))
+            self.assertFalse(list(root.rglob("*.partial")))
+
+    def test_plan_backup_subfolder_mode_excludes_backup_root_inside_source(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_root:
+            source = Path(temp_root) / "work"
+            source.mkdir()
+            (source / "scene.blend").write_bytes(b"blend")
+            backup_root = source / "Backups"
+            current_destination = backup_root / "work"
+            current_destination.mkdir(parents=True)
+            (current_destination / "old.zip").write_bytes(b"old")
+            (backup_root / "other.zip").write_bytes(b"other")
+
+            plan = plan_backup(
+                source_directory=source,
+                backup_directory=backup_root,
+                destination_mode="SUBFOLDER",
+                created_at=datetime(2026, 5, 14, 12, 0, 0),
+            )
+
+            self.assertEqual(plan.file_count, 1)
+            self.assertEqual(plan.backup_directory, backup_root / "work")
+            self.assertEqual(plan.excluded_directories, (backup_root.resolve(),))
+
     def test_run_backup_creates_zip_and_excludes_backup_folder(self) -> None:
         with tempfile.TemporaryDirectory() as temp_root:
             root = Path(temp_root)

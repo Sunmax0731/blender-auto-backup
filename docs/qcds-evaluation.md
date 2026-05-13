@@ -1,15 +1,15 @@
 # QCDS Evaluation
 
-Generated for completed Blender Auto Backup MVP backlog on 2026-05-14.
+Generated for completed Blender Auto Backup MVP and post-MVP backlog on 2026-05-14.
 
 ## Ratings
 
 | Area | Rating | Evidence |
 | --- | --- | --- |
-| Quality | A- | Core backup service has unittest coverage for ZIP creation, cleanup, glob filtering, destination layout selection, and runtime gate path handling. Blender 5.1.1 runtime gate passed with extension validation. |
+| Quality | A- | Core backup service has unittest coverage for Backup Preview, ZIP creation, cleanup, glob filtering, destination layout selection, and runtime gate path handling. Blender 5.1.1 runtime gate passed with extension validation. |
 | Cost | A+ | No external runtime dependencies. Background worker, ZIP packaging, and tests use Python standard library. |
-| Delivery | A- | MVP implementation plus P3 background worker, glob filters, global default backup location, local Issues, docs, packaging, backlog triage, release notes, GitHub release evidence, screenshot user guide, and distribution assets are present. |
-| Satisfaction | A- | The requested backlog is implemented, including selectable direct/subfolder backup destination layouts and screenshot-based user guidance. Runtime gate passed on Blender 5.1.1, package validation passes, and user-side behavior verification was confirmed on 2026-05-14. |
+| Delivery | A- | MVP implementation plus P3 background worker, glob filters, global default backup location, local Issues, docs, packaging, backlog triage, release notes, GitHub release evidence, screenshot user guide, Backup Preview, and distribution assets are present. |
+| Satisfaction | A- | The requested backlog is implemented, including selectable direct/subfolder backup destination layouts, Backup Preview, and screenshot-based user guidance. Runtime gate passed on Blender 5.1.1, package validation passes, and user-side behavior verification was confirmed on 2026-05-14. |
 
 ## Runtime gate
 
@@ -43,7 +43,8 @@ Quality and Satisfaction are no longer capped by runtime gate status.
 - `Issues/0009-issue.md`: exact duplicate of Issue 0008, closed through consolidation.
 - `Issues/0010-issue.md`: selectable backup destination layout is implemented with direct storage compatibility, project subfolder storage, and user-confirmed behavior verification.
 - `Issues/0011-github.md`: release notes, release evidence, QCDS evidence, docs ZIP input, and GitHub release target are synchronized for `v0.1.0`.
-- `TODO.md`: Issue 0012 documentation synchronization is complete. Issue 0013 remains open as post-MVP follow-up work and is not part of the `v0.1.0` release gate.
+- `Issues/0013-mvp.md`: Backup Preview / Dry Run is implemented and post-MVP improvement priorities are documented in `docs/specification.md`.
+- `TODO.md`: all local work items are complete.
 
 ## Release evidence
 

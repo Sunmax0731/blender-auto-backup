@@ -24,10 +24,12 @@ Expected result:
 ## Representative scenarios covered by unittest
 
 - ZIP is created from a source folder
+- Backup Preview counts target files and bytes without creating ZIP, destination folder, or `.partial` files
 - Nested files are included
 - Backup folder inside source folder is excluded
 - Subfolder destination layout writes ZIP files under `Backup Folder/<safe label>`
 - Subfolder destination layout excludes the configured backup root when it is inside the source folder
+- Backup Preview uses the same subfolder destination exclusion logic as ZIP creation
 - Unknown destination layout values fail before ZIP creation
 - `.partial` files are not left after success
 - Missing source folder fails

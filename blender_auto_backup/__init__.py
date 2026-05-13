@@ -24,6 +24,7 @@ def _load_classes():
     return (
         properties.BlenderAutoBackupPreferences,
         properties.BlenderAutoBackupSettings,
+        operators.BLENDER_AUTO_BACKUP_OT_preview,
         operators.BLENDER_AUTO_BACKUP_OT_run_now,
         operators.BLENDER_AUTO_BACKUP_OT_start,
         operators.BLENDER_AUTO_BACKUP_OT_stop,

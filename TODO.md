@@ -50,4 +50,4 @@ No current standalone TODO. Design evidence is maintained in `docs/architecture.
 - [x] [P2] バックアップ保存先のサブフォルダ方式を追加 [Issue](Issues/0010-issue.md) [phase=04-implementation] [QCDS:Quality,Satisfaction]
 - [x] [P2] リリース資料整備とGitHubリリース [Issue](Issues/0011-github.md) [phase=06-release] [QCDS:Quality,Delivery,Satisfaction]
 - [x] [P3] 画面画像を使った利用者向けドキュメント整備 [Issue](Issues/0012-user-guide-images.md) [phase=06-release] [QCDS:Satisfaction,Delivery]
-- [ ] [P2] MVP後の機能追加とドキュメント改善 [Issue](Issues/0013-mvp.md) [phase=04-implementation] [QCDS:Quality,Cost,Delivery,Satisfaction]
+- [x] [P2] MVP後の機能追加とドキュメント改善 [Issue](Issues/0013-mvp.md) [phase=04-implementation] [QCDS:Quality,Cost,Delivery,Satisfaction]

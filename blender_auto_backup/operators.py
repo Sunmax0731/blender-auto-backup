@@ -11,7 +11,7 @@ import sys
 import bpy
 
 from . import scheduler
-from .services.backup_service import BackupError, resolve_backup_directory, run_backup
+from .services.backup_service import BackupError, plan_backup, resolve_backup_directory, run_backup
 
 ADDON_ID = __package__ or "blender_auto_backup"
 
@@ -84,6 +84,20 @@ def _success_status(result) -> str:
     )
 
 
+def _preview_status(plan) -> str:
+    return (
+        f"Preview: {plan.file_count} files, {plan.byte_count} bytes -> "
+        f"{plan.archive_path}"
+    )
+
+
+def preview_backup_for_settings(settings) -> str:
+    plan = plan_backup(**_backup_kwargs_from_settings(settings))
+    settings.last_run_at = _status_time()
+    settings.last_status = _preview_status(plan)
+    return settings.last_status
+
+
 def perform_backup_for_settings(settings) -> str:
     result = run_backup(**_backup_kwargs_from_settings(settings))
     settings.last_backup_path = str(result.archive_path)
@@ -115,6 +129,25 @@ class BLENDER_AUTO_BACKUP_OT_run_now(bpy.types.Operator):
             return {"FINISHED"} if started else {"CANCELLED"}
         try:
             message = perform_backup_for_settings(settings)
+        except BackupError as exc:
+            settings.last_run_at = _status_time()
+            settings.last_status = f"Error: {exc}"
+            self.report({"ERROR"}, settings.last_status)
+            return {"CANCELLED"}
+        self.report({"INFO"}, message)
+        return {"FINISHED"}
+
+
+class BLENDER_AUTO_BACKUP_OT_preview(bpy.types.Operator):
+    bl_idname = "blender_auto_backup.preview"
+    bl_label = "Preview Backup"
+    bl_description = "Count files and show the target ZIP path without creating a backup"
+    bl_options = {"REGISTER"}
+
+    def execute(self, context):
+        settings = _settings(context)
+        try:
+            message = preview_backup_for_settings(settings)
         except BackupError as exc:
             settings.last_run_at = _status_time()
             settings.last_status = f"Error: {exc}"
