@@ -10,7 +10,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 DIST = ROOT / "dist"
 GATE_SCRIPT = ROOT / "tests" / "blender_runtime_gate.py"
-PACKAGE = DIST / "blender-auto-backup-0.1.0.zip"
+PACKAGE = DIST / "blender-auto-backup-0.1.1.zip"
 EXPECTED_VERSION = "Blender 4.2+; user validation target is 5.1.1"
 STANDARD_CANDIDATES = [
     Path(r"C:\Program Files\Blender Foundation\Blender 5.1\blender.exe"),

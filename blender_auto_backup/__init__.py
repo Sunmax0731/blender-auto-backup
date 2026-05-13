@@ -5,7 +5,7 @@ from __future__ import annotations
 bl_info = {
     "name": "Blender Auto Backup",
     "author": "Sunmax0731",
-    "version": (0, 1, 0),
+    "version": (0, 1, 1),
     "blender": (4, 2, 0),
     "location": "Scene Properties > Auto Backup",
     "description": "Back up a selected working folder on a configured interval.",

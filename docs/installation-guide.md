@@ -15,8 +15,8 @@ npm test
 
 期待結果:
 
-- `dist/blender-auto-backup-0.1.0.zip` が作成される
-- `dist/blender-auto-backup-docs-0.1.0.zip` が作成される
+- `dist/blender-auto-backup-0.1.1.zip` が作成される
+- `dist/blender-auto-backup-docs-0.1.1.zip` が作成される
 - `dist/test-summary.json` が作成される
 - アドオン ZIP の root に `blender_manifest.toml` と `__init__.py` が含まれる
 
@@ -25,7 +25,7 @@ npm test
 1. Blender を起動する。
 2. `Edit > Preferences > Add-ons` を開く。
 3. `Install from Disk...` を押す。
-4. `D:\AI\BlenderAddon\blender-auto-backup\dist\blender-auto-backup-0.1.0.zip` を選ぶ。
+4. `D:\AI\BlenderAddon\blender-auto-backup\dist\blender-auto-backup-0.1.1.zip` を選ぶ。
 5. `Blender Auto Backup` を有効化する。
 6. Scene Properties に `Auto Backup` パネルが表示されることを確認する。
 

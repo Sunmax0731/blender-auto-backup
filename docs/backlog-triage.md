@@ -2,7 +2,7 @@
 
 Generated for Issue 0008 / 0009 closure on 2026-05-14.
 
-Updated on 2026-05-14 so `TODO.md`, local Issues, and Codex session records all expose explicit phase metadata. Issue 0010 was completed in the 04-implementation phase after adding the selectable backup destination layout. Issue 0013 was completed by adding Backup Preview / Dry Run and synchronizing post-MVP documentation.
+Updated on 2026-05-14 so `TODO.md`, local Issues, and Codex session records all expose explicit phase metadata. Issue 0010 was completed in the 04-implementation phase after adding the selectable backup destination layout. Issue 0013 was completed by adding Backup Preview / Dry Run and synchronizing post-MVP documentation. Issue 0014 tracks the v0.1.1 release publication.
 
 ## Phase Taxonomy
 
@@ -30,7 +30,7 @@ Updated on 2026-05-14 so `TODO.md`, local Issues, and Codex session records all 
 | 03-design | `docs/architecture.md` | Done. Module boundaries and the selected timer plus optional worker design are documented. |
 | 04-implementation | Issues 0002, 0003, 0004, 0010, 0013 | Done. Background worker, glob rules, global default folder, selectable backup destination layout, and Backup Preview / Dry Run are implemented. |
 | 05-test | Issues 0001, 0005, 0006, `docs/test-plan.md`, `docs/manual-test.md`, `dist/runtime-gate.json` | Done. Automated test flow, runtime gate diagnostics, Steam Blender detection, and Blender 5.1.1 runtime gate evidence are present. |
-| 06-release | Issue 0007, `docs/release-checklist.md`, `docs/qcds-evaluation.md`, `docs/qcds-strict-metrics.json`, `dist/` artifacts | Done. Manifest validation and release evidence are synchronized for MVP readiness. |
+| 06-release | Issues 0007, 0011, 0012, 0014, `docs/release-checklist.md`, `docs/qcds-evaluation.md`, `docs/qcds-strict-metrics.json`, `dist/` artifacts | Done. Manifest validation, release evidence, screenshot documentation, and v0.1.1 package publication are synchronized. |
 
 ## Duplicate And Granularity Review
 
@@ -41,4 +41,4 @@ Updated on 2026-05-14 so `TODO.md`, local Issues, and Codex session records all 
 
 ## Next Work
 
-No open TODO or local Issue remains after Issue 0013 implementation. Future post-MVP candidates are documented in `docs/specification.md` with explicit priority and deferred status.
+No open TODO or local Issue remains after Issue 0014 release publication. Future post-MVP candidates are documented in `docs/specification.md` with explicit priority and deferred status.

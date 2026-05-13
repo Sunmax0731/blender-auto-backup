@@ -1,6 +1,6 @@
 schema_version = "1.0.0"
 id = "blender_auto_backup"
-version = "0.1.0"
+version = "0.1.1"
 name = "Blender Auto Backup"
 tagline = "Back up Blender project folders on a schedule"
 maintainer = "Sunmax0731"

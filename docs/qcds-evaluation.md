@@ -8,7 +8,7 @@ Generated for completed Blender Auto Backup MVP and post-MVP backlog on 2026-05-
 | --- | --- | --- |
 | Quality | A- | Core backup service has unittest coverage for Backup Preview, ZIP creation, cleanup, glob filtering, destination layout selection, and runtime gate path handling. Blender 5.1.1 runtime gate passed with extension validation. |
 | Cost | A+ | No external runtime dependencies. Background worker, ZIP packaging, and tests use Python standard library. |
-| Delivery | A- | MVP implementation plus P3 background worker, glob filters, global default backup location, local Issues, docs, packaging, backlog triage, release notes, GitHub release evidence, screenshot user guide, Backup Preview, and distribution assets are present. |
+| Delivery | A- | MVP implementation plus P3 background worker, glob filters, global default backup location, local Issues, docs, packaging, backlog triage, release notes, GitHub release evidence, screenshot user guide, Backup Preview, and v0.1.1 distribution assets are present. |
 | Satisfaction | A- | The requested backlog is implemented, including selectable direct/subfolder backup destination layouts, Backup Preview, and screenshot-based user guidance. Runtime gate passed on Blender 5.1.1, package validation passes, and user-side behavior verification was confirmed on 2026-05-14. |
 
 ## Runtime gate
@@ -44,10 +44,11 @@ Quality and Satisfaction are no longer capped by runtime gate status.
 - `Issues/0010-issue.md`: selectable backup destination layout is implemented with direct storage compatibility, project subfolder storage, and user-confirmed behavior verification.
 - `Issues/0011-github.md`: release notes, release evidence, QCDS evidence, docs ZIP input, and GitHub release target are synchronized for `v0.1.0`.
 - `Issues/0013-mvp.md`: Backup Preview / Dry Run is implemented and post-MVP improvement priorities are documented in `docs/specification.md`.
+- `Issues/0014-release-v0.1.1.md`: version bump, package/docs ZIP, release notes, QCDS evidence, and GitHub release target are synchronized for `v0.1.1`.
 - `TODO.md`: all local work items are complete.
 
 ## Release evidence
 
-- Release notes: `docs/releases/v0.1.0.md`
+- Release notes: `docs/releases/v0.1.1.md`
 - Release evidence JSON: `docs/release-evidence.json`
-- GitHub release URL: `https://github.com/Sunmax0731/blender-auto-backup/releases/tag/v0.1.0`
+- GitHub release URL: `https://github.com/Sunmax0731/blender-auto-backup/releases/tag/v0.1.1`

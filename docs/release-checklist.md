@@ -31,16 +31,25 @@
 - [x] Docs ZIP includes `docs/user-guide.md` and `docs/img/*.png`.
 - [x] GitHub release `v0.1.0` is published with package, docs, test-summary, and runtime-gate assets.
 
+## Release 0.1.1
+
+- [x] Add-on metadata, manifest, package version, package script, docs ZIP script, and runtime gate package path are set to `0.1.1`.
+- [x] Backup Preview / Dry Run reports target file count, byte count, and planned archive path without creating ZIP files.
+- [x] Core backup service has unittest coverage for Preview without ZIP, destination folder, or `.partial` creation.
+- [x] README, installation guide, user guide, manual test guide, specification, architecture, test plan, QCDS, TODO, and local Issue 0014 are synchronized.
+- [x] Release notes exist at `docs/releases/v0.1.1.md`.
+- [x] Docs ZIP includes `docs/releases/v0.1.0.md` and `docs/releases/v0.1.1.md`.
+- [x] `npm test` passes and Blender 5.1.1 runtime gate reports `passed`.
+- [x] GitHub release `v0.1.1` is published with package, docs, test-summary, and runtime-gate assets.
+
 ## Publish notes
 
 The initial public GitHub remote is:
 
 `https://github.com/Sunmax0731/blender-auto-backup`
 
-This repo can be treated as MVP-ready. Blender 5.1.1 runtime gate reports `passed`.
-
-Post-MVP Issue 0013 is also complete in source and docs. The next public package should be released as a later version if these post-MVP changes are published.
+This repo can be treated as v0.1.1-ready. Blender 5.1.1 runtime gate reports `passed`.
 
 GitHub release:
 
-`https://github.com/Sunmax0731/blender-auto-backup/releases/tag/v0.1.0`
+`https://github.com/Sunmax0731/blender-auto-backup/releases/tag/v0.1.1`

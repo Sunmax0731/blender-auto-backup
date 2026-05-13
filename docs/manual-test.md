@@ -22,7 +22,7 @@ npm test
 
 期待結果:
 
-- `dist/blender-auto-backup-0.1.0.zip` が存在する
+- `dist/blender-auto-backup-0.1.1.zip` が存在する
 - Blender 実行ファイルが見つかる環境では `dist/runtime-gate.json` の `status` が `passed`
 - Blender 実行ファイルが見つからない環境では `status` が `not_run`
 
@@ -31,7 +31,7 @@ npm test
 画面上の操作位置は [user-guide.md](user-guide.md) のスクリーンショットを参照する。
 
 1. Blender 5.1.1 を起動する。
-2. `Edit > Preferences > Add-ons > Install from Disk...` から `dist/blender-auto-backup-0.1.0.zip` を導入する。
+2. `Edit > Preferences > Add-ons > Install from Disk...` から `dist/blender-auto-backup-0.1.1.zip` を導入する。
 3. `Blender Auto Backup` を有効化する。
 4. 任意の一時フォルダを作り、`scene.blend` と `notes.txt` を置く。
 5. Scene Properties > `Auto Backup` を開く。

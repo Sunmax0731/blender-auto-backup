@@ -4,7 +4,7 @@ from pathlib import Path
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
-VERSION = "0.1.0"
+VERSION = "0.1.1"
 DIST = ROOT / "dist"
 
 DOC_FILES = [
@@ -24,6 +24,7 @@ DOC_FILES = [
     "docs/release-checklist.md",
     "docs/release-evidence.json",
     "docs/releases/v0.1.0.md",
+    "docs/releases/v0.1.1.md",
 ]
 
 
