@@ -13,6 +13,7 @@ DOC_FILES = [
     "SKILL.md",
     "TODO.md",
     "docs/installation-guide.md",
+    "docs/user-guide.md",
     "docs/manual-test.md",
     "docs/specification.md",
     "docs/architecture.md",
@@ -28,6 +29,12 @@ DOC_FILES = [
 
 def iter_doc_files() -> list[str]:
     files = list(DOC_FILES)
+    img_dir = ROOT / "docs" / "img"
+    if img_dir.exists():
+        files.extend(
+            path.relative_to(ROOT).as_posix()
+            for path in sorted(img_dir.glob("*.png"))
+        )
     issues_dir = ROOT / "Issues"
     if issues_dir.exists():
         files.extend(

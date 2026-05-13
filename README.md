@@ -4,6 +4,10 @@ Blender 4.2 以降向けのアドオンです。Blender 作業中のフォルダ
 
 対象リポジトリ: `D:\AI\BlenderAddon\blender-auto-backup`
 
+## 利用者向けマニュアル
+
+Blender 上での画面の開き方、バックアップ設定、ZIP の確認手順は [画面付きユーザーガイド](docs/user-guide.md) を参照してください。
+
 ## 主な機能
 
 - Scene Properties > Auto Backup からバックアップ対象フォルダ、保存先、間隔、保持数を設定
@@ -31,7 +35,7 @@ Blender 4.2 以降向けのアドオンです。Blender 作業中のフォルダ
 3. `Edit > Preferences > Add-ons > Install from Disk...` で ZIP を選択します。
 4. `Blender Auto Backup` を有効化します。
 
-詳細は [docs/installation-guide.md](docs/installation-guide.md) を参照してください。
+インストールの詳細は [installation guide](docs/installation-guide.md) を参照してください。
 
 ## 使い方
 

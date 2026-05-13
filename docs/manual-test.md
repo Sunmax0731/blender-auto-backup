@@ -28,6 +28,8 @@ npm test
 
 ## Blender 5.1.1 手動シナリオ
 
+画面上の操作位置は [user-guide.md](user-guide.md) のスクリーンショットを参照する。
+
 1. Blender 5.1.1 を起動する。
 2. `Edit > Preferences > Add-ons > Install from Disk...` から `dist/blender-auto-backup-0.1.0.zip` を導入する。
 3. `Blender Auto Backup` を有効化する。

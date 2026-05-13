@@ -22,7 +22,11 @@
     "dist/blender-auto-backup-latest.zip",
     "dist/blender-auto-backup-docs-0.1.0.zip",
     "dist/test-summary.json",
-    "dist/runtime-gate.json"
+    "dist/runtime-gate.json",
+    "docs/user-guide.md",
+    "docs/img/img1.png",
+    "docs/img/img2.png",
+    "docs/img/img3.png"
   ],
   "local_issue": "Issues/0011-github.md",
   "qcds": {

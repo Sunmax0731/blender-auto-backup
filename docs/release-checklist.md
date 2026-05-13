@@ -12,6 +12,7 @@
 - [x] QCDS evaluation exists.
 - [x] Strict QCDS metrics JSON exists and validates.
 - [x] Manual test guide includes working directory, commands, expected result, and URL status.
+- [x] User guide includes screenshots for Scene properties, Auto Backup settings, and generated ZIP output.
 - [x] Local Issue backlog exists under `Issues/` and is linked from `TODO.md`.
 - [x] Include / exclude glob rules are implemented and covered by unittest.
 - [x] Add-on preferences provide a global default backup location.
@@ -26,6 +27,7 @@
 - [x] Release notes exist at `docs/releases/v0.1.0.md`.
 - [x] Release evidence exists at `docs/release-evidence.json`.
 - [x] Docs ZIP includes the release notes, release evidence, and local Issues.
+- [x] Docs ZIP includes `docs/user-guide.md` and `docs/img/*.png`.
 - [x] GitHub release `v0.1.0` is published with package, docs, test-summary, and runtime-gate assets.
 
 ## Publish notes

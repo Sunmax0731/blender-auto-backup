@@ -29,6 +29,8 @@ npm test
 5. `Blender Auto Backup` を有効化する。
 6. Scene Properties に `Auto Backup` パネルが表示されることを確認する。
 
+画面の場所と各設定項目は [user-guide.md](user-guide.md) を参照してください。
+
 ## 手動更新
 
 新しい ZIP を導入する場合は、既存の `Blender Auto Backup` を無効化してから同じ手順で ZIP を入れ直してください。
