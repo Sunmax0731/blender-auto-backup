@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-05-14T04:00:00+09:00",
+  "project": "blender-auto-backup",
+  "ratings": {
+    "Quality": "B+",
+    "Cost": "A+",
+    "Delivery": "A-",
+    "Satisfaction": "B+"
+  },
+  "runtime_gate": {
+    "status": "not_run",
+    "gate": "Launch Blender headless, enable the add-on, run the backup operator, and confirm one backup ZIP is created.",
+    "reason": "blender.exe was not found in the Codex environment. User validation target is Blender 5.1.1.",
+    "command": "npm run runtime:gate"
+  },
+  "artifacts": [
+    "dist/blender-auto-backup-0.1.0.zip",
+    "dist/blender-auto-backup-docs-0.1.0.zip",
+    "dist/test-summary.json",
+    "dist/runtime-gate.json"
+  ]
+}
+

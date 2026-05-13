@@ -1,0 +1,14 @@
+schema_version = "1.0.0"
+id = "blender_auto_backup"
+version = "0.1.0"
+name = "Blender Auto Backup"
+tagline = "Back up a selected Blender working folder on a configured interval"
+maintainer = "Sunmax0731"
+type = "add-on"
+website = "https://github.com/Sunmax0731/blender-auto-backup"
+tags = ["System"]
+blender_version_min = "4.2.0"
+license = ["SPDX:MIT"]
+
+[permissions]
+files = "Read selected source folders and write backup ZIP files"

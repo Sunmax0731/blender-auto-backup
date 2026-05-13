@@ -1,0 +1,34 @@
+{
+  "status": "passed_with_runtime_not_run",
+  "steps": [
+    {
+      "name": "compile_addon",
+      "status": "passed"
+    },
+    {
+      "name": "unittest",
+      "status": "passed",
+      "tests": 4
+    },
+    {
+      "name": "package_addon",
+      "status": "passed"
+    },
+    {
+      "name": "collect_docs_zip",
+      "status": "passed"
+    },
+    {
+      "name": "validate_qcds",
+      "status": "passed"
+    },
+    {
+      "name": "check_text_integrity",
+      "status": "passed"
+    },
+    {
+      "name": "runtime_gate",
+      "status": "not_run"
+    }
+  ]
+}

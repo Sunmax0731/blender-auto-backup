@@ -1,0 +1,5 @@
+{
+  "status": "not_run",
+  "reason": "blender.exe was not found. Set BLENDER_EXE to run the gate.",
+  "expected_version": "Blender 4.2+; user validation target is 5.1.1"
+}

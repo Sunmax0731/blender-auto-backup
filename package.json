@@ -1,0 +1,16 @@
+{
+  "name": "blender-auto-backup",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Blender 4.2+ add-on that backs up a selected working folder on a configured interval.",
+  "scripts": {
+    "test": "python scripts/run_tests.py",
+    "package": "python scripts/package_addon.py",
+    "docs:zip": "python scripts/collect_docs_zip.py",
+    "runtime:gate": "python scripts/run_blender_runtime_gate.py"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
+
