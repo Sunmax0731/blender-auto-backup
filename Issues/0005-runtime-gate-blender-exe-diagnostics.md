@@ -2,7 +2,7 @@
 
 - Priority: P3
 - Status: done
-- Phase: 05-test-validation
+- Phase: 05-test
 - Linked TODO: [TODO.md](../TODO.md)
 
 ## Contract

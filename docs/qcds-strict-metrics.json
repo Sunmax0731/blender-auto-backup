@@ -8,6 +8,20 @@
     "Delivery": "A-",
     "Satisfaction": "A-"
   },
+  "grades": {
+    "Quality": "A-",
+    "Cost": "A+",
+    "Delivery": "A-",
+    "Satisfaction": "A-"
+  },
+  "scores": {
+    "Quality": 80,
+    "Cost": 85,
+    "Delivery": 80,
+    "Satisfaction": 80
+  },
+  "overallGrade": "A-",
+  "overallScore": 81,
   "runtime_gate": {
     "status": "passed",
     "gate": "Launch Blender headless, enable the add-on, run the backup operator, and confirm one backup ZIP is created.",

@@ -4,8 +4,7 @@ This file is the phase TODO source for local Work Items. Keep a `phase=...` toke
 
 ## 00-inbox TODO
 
-- [x] [P2] 未整理課題のフェーズ振り分け [Issue](Issues/0008-issue.md) [phase=00-inbox] [QCDS:Cost,Delivery]
-- [x] [P2] 未整理課題のフェーズ振り分け（0008 に統合） [Issue](Issues/0009-issue.md) [phase=00-inbox] [QCDS:Cost,Delivery]
+No current TODO. New uncategorized work should be moved into one of the phase sections below before it is started.
 
 ## 01-requirements TODO
 
@@ -13,6 +12,8 @@ This file is the phase TODO source for local Work Items. Keep a `phase=...` toke
 - [x] Create public GitHub remote and set local `origin`. [phase=01-requirements]
 - [x] Use one work branch: `codex/blender-auto-backup-mvp`. [phase=01-requirements]
 - [x] Add repo-local `README.md`, `AGENTS.md`, and `SKILL.md`. [phase=01-requirements]
+- [x] [P2] 未整理課題のフェーズ振り分け [Issue](Issues/0008-issue.md) [phase=01-requirements] [QCDS:Cost,Delivery]
+- [x] [P2] 未整理課題のフェーズ振り分け（0008 に統合） [Issue](Issues/0009-issue.md) [phase=01-requirements] [QCDS:Cost,Delivery]
 
 ## 02-specification TODO
 
@@ -30,13 +31,13 @@ No current standalone TODO. Design evidence is maintained in `docs/architecture.
 - [x] [P3] Add optional include/exclude glob rules. ([Issue 0003](Issues/0003-include-exclude-glob-rules.md)) [phase=04-implementation]
 - [x] [P3] Add add-on preferences for global default backup location. ([Issue 0004](Issues/0004-global-default-backup-location.md)) [phase=04-implementation]
 
-## 05-test-validation TODO
+## 05-test TODO
 
-- [x] Add automated unittest coverage for backup creation, cleanup, and validation errors. [phase=05-test-validation]
-- [x] Add text integrity check for mojibake markers and control characters. [phase=05-test-validation]
-- [x] [P3] Run Blender 5.1.1 runtime gate on a machine where `blender.exe` is available. ([Issue 0001](Issues/0001-blender-511-runtime-gate.md)) [phase=05-test-validation]
-- [x] [P3] Detect Steam Blender installs and directory-valued `BLENDER_EXE`. ([Issue 0006](Issues/0006-runtime-gate-steam-blender-detection.md)) [phase=05-test-validation]
-- [x] [P3] Improve runtime gate diagnostics when `BLENDER_EXE` is set but not found. ([Issue 0005](Issues/0005-runtime-gate-blender-exe-diagnostics.md)) [phase=05-test-validation]
+- [x] Add automated unittest coverage for backup creation, cleanup, and validation errors. [phase=05-test]
+- [x] Add text integrity check for mojibake markers and control characters. [phase=05-test]
+- [x] [P3] Run Blender 5.1.1 runtime gate on a machine where `blender.exe` is available. ([Issue 0001](Issues/0001-blender-511-runtime-gate.md)) [phase=05-test]
+- [x] [P3] Detect Steam Blender installs and directory-valued `BLENDER_EXE`. ([Issue 0006](Issues/0006-runtime-gate-steam-blender-detection.md)) [phase=05-test]
+- [x] [P3] Improve runtime gate diagnostics when `BLENDER_EXE` is set but not found. ([Issue 0005](Issues/0005-runtime-gate-blender-exe-diagnostics.md)) [phase=05-test]
 
 ## 06-release TODO
 

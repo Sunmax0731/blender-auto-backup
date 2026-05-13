@@ -5,7 +5,7 @@
 - Type: feature
 - Source: local
 - Draft source: codex-cli
-- Phase: 00-inbox
+- Phase: 01-requirements
 - Created: 2026-05-13
 - QCDS: Cost, Delivery
 
