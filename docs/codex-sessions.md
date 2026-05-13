@@ -1,0 +1,10 @@
+# Codex Sessions
+
+TODO / Issue を VS Code Codex または Codex CLI へ渡した履歴です。Codex 側の Thread ID が分かる場合は、この表または対象 Issue の Notes に追記します。
+
+| Time | Session | Source | Access | Model | Intelligence | Targets | Prompt |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 2026-05-13T18:55:50.727Z codex-session-20260513185550-sycktj All Work Items (VS Code Codex handoff) danger-full-access gpt-5.5 medium todo:TODO.md:16 done phase=05-test<br>todo:TODO.md:20 done phase=04-implementation<br>todo:TODO.md:21 done phase=04-implementation<br>todo:TODO.md:22 done phase=04-implementation [prompt](c:/Users/gkkjh/AppData/Roaming/Code/User/workspaceStorage/c3f13110f602d3f98fbe6ea1c39016d9/sunmax0731.codex-friendly-project-starter/first-prompt-20260513T185550Z.md) |
+| 2026-05-13T19:32:35.982Z codex-session-20260513193235-cqfb4z All Work Items (VS Code Codex handoff) danger-full-access gpt-5.5 high todo:TODO.md:28 done phase=01-requirements<br>todo:TODO.md:29 done phase=01-requirements<br>issue:Issues/0008-issue.md:1 done phase=01-requirements<br>issue:Issues/0009-issue.md:1 done phase=01-requirements [prompt](c:/Users/gkkjh/AppData/Roaming/Code/User/workspaceStorage/c3f13110f602d3f98fbe6ea1c39016d9/sunmax0731.codex-friendly-project-starter/first-prompt-20260513T193235Z.md) |
+| 2026-05-13T20:43:06.564Z codex-session-20260513204306-8phq7h Work Item: バックアップ保存先のサブフォルダ方式を追加 (VS Code Codex handoff) danger-full-access gpt-5.5 high issue:Issues/0010-issue.md:1 [prompt](c:/Users/gkkjh/AppData/Roaming/Code/User/workspaceStorage/c3f13110f602d3f98fbe6ea1c39016d9/sunmax0731.codex-friendly-project-starter/first-prompt-20260513T204306Z.md) |
+| 2026-05-13T20:57:51.781Z codex-session-20260513205751-lp5o7g All Work Items (VS Code Codex handoff) danger-full-access gpt-5.5 high todo:TODO.md:51<br>issue:Issues/0011-github.md:1 [prompt](c:/Users/gkkjh/AppData/Roaming/Code/User/workspaceStorage/c3f13110f602d3f98fbe6ea1c39016d9/sunmax0731.codex-friendly-project-starter/first-prompt-20260513T205751Z.md) |

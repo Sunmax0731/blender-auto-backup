@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "project": "blender-auto-backup",
+  "version": "0.1.0",
+  "tag": "v0.1.0",
+  "generated_at": "2026-05-14T06:00:12+09:00",
+  "repository": "https://github.com/Sunmax0731/blender-auto-backup",
+  "release_url": "https://github.com/Sunmax0731/blender-auto-backup/releases/tag/v0.1.0",
+  "release_state": "prepared_for_public_release",
+  "target_branch": "main",
+  "source_branch": "codex/all-open-work-items",
+  "verification": {
+    "automated_gate": "npm test",
+    "runtime_gate_status": "passed",
+    "blender_version": "5.1.1",
+    "blender_exe": "D:\\SteamLibrary\\steamapps\\common\\Blender\\blender.exe",
+    "extension_validate": "passed",
+    "text_integrity": "passed"
+  },
+  "artifacts": [
+    "dist/blender-auto-backup-0.1.0.zip",
+    "dist/blender-auto-backup-latest.zip",
+    "dist/blender-auto-backup-docs-0.1.0.zip",
+    "dist/test-summary.json",
+    "dist/runtime-gate.json"
+  ],
+  "local_issue": "Issues/0011-github.md",
+  "qcds": {
+    "Quality": "A-",
+    "Cost": "A+",
+    "Delivery": "A-",
+    "Satisfaction": "A-"
+  }
+}

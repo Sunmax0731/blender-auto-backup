@@ -4,6 +4,23 @@ from __future__ import annotations
 
 import bpy
 
+ADDON_ID = __package__ or "blender_auto_backup"
+
+
+class BlenderAutoBackupPreferences(bpy.types.AddonPreferences):
+    bl_idname = ADDON_ID
+
+    default_backup_directory: bpy.props.StringProperty(
+        name="Default Backup Folder",
+        description="Global backup folder used when a scene Backup Folder is empty",
+        subtype="DIR_PATH",
+        default="",
+    )
+
+    def draw(self, context):
+        layout = self.layout
+        layout.prop(self, "default_backup_directory")
+
 
 class BlenderAutoBackupSettings(bpy.types.PropertyGroup):
     source_directory: bpy.props.StringProperty(
@@ -17,6 +34,15 @@ class BlenderAutoBackupSettings(bpy.types.PropertyGroup):
         description="Folder where backup ZIP files are stored. Empty uses .blender-auto-backup inside Source Folder.",
         subtype="DIR_PATH",
         default="",
+    )
+    backup_destination_mode: bpy.props.EnumProperty(
+        name="Destination Layout",
+        description="Choose whether ZIP files are saved directly in Backup Folder or inside a project subfolder",
+        items=(
+            ("DIRECT", "Direct", "Save ZIP files directly in Backup Folder"),
+            ("SUBFOLDER", "Subfolder", "Create a project subfolder in Backup Folder and save ZIP files there"),
+        ),
+        default="DIRECT",
     )
     backup_label: bpy.props.StringProperty(
         name="Backup Label",
@@ -36,6 +62,21 @@ class BlenderAutoBackupSettings(bpy.types.PropertyGroup):
         default=20,
         min=1,
         max=999,
+    )
+    use_background_worker: bpy.props.BoolProperty(
+        name="Run in Background",
+        description="Run backup ZIP creation on a worker thread and update the panel when it finishes",
+        default=False,
+    )
+    include_globs: bpy.props.StringProperty(
+        name="Include Globs",
+        description="Optional semicolon or newline separated globs. Empty includes all files.",
+        default="",
+    )
+    exclude_globs: bpy.props.StringProperty(
+        name="Exclude Globs",
+        description="Optional semicolon or newline separated globs. Excludes take precedence.",
+        default="",
     )
     enabled: bpy.props.BoolProperty(
         name="Auto Backup Enabled",
@@ -59,4 +100,3 @@ class BlenderAutoBackupSettings(bpy.types.PropertyGroup):
         name="Next Run At",
         default="",
     )
-

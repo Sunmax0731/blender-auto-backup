@@ -9,6 +9,10 @@ Blender 4.2 以降向けのアドオンです。Blender 作業中のフォルダ
 - Scene Properties > Auto Backup からバックアップ対象フォルダ、保存先、間隔、保持数を設定
 - 手動バックアップ実行
 - Blender timer による定期バックアップ
+- 大容量フォルダ向けの任意のバックグラウンド実行
+- 任意の include / exclude glob によるバックアップ対象選別
+- アドオン設定による global default backup folder
+- Backup Folder 直下へ保存する方式と、対象フォルダ名のサブフォルダ配下へ保存する方式を選択可能
 - `.partial` を使った一時 ZIP 作成と置換で、不完全な ZIP を正式成果物にしない
 - 保存先が作業フォルダ内にある場合も、バックアップ ZIP 自身を再帰的に取り込まない
 - 古い ZIP を `max_backups` 件まで自動整理
@@ -33,11 +37,12 @@ Blender 4.2 以降向けのアドオンです。Blender 作業中のフォルダ
 
 1. Blender の Scene Properties を開きます。
 2. `Auto Backup` パネルで `Source Folder` を指定します。
-3. 必要に応じて `Backup Folder`、`Interval Minutes`、`Max Backups` を設定します。
-4. `Backup Now` で代表動作を確認します。
-5. `Start Auto Backup` で定期バックアップを開始します。
+3. 必要に応じて `Backup Folder`、`Destination Layout`、`Interval Minutes`、`Max Backups` を設定します。
+4. 必要に応じて `Run in Background`、`Include Globs`、`Exclude Globs` を設定します。
+5. `Backup Now` で代表動作を確認します。
+6. `Start Auto Backup` で定期バックアップを開始します。
 
-保存先を空にした場合、`Source Folder\.blender-auto-backup` に ZIP が作成されます。
+保存先を空にした場合、アドオン設定の `Default Backup Folder` が使われます。そこも空の場合は `Source Folder\.blender-auto-backup` に ZIP が作成されます。`Destination Layout` が `Subfolder` の場合は、有効な保存先フォルダの直下に対象フォルダ名のサブフォルダを作り、その配下に ZIP を作成します。
 
 ## 開発コマンド
 
@@ -70,5 +75,5 @@ The add-on ZIP uses the Blender 4.2 extension layout: `blender_manifest.toml` an
 ## 現在の制限
 
 - MVP は active scene の設定を対象にします。
-- 大容量フォルダの ZIP 作成は Blender UI thread 上で動くため、非常に大きい作業フォルダでは操作が重くなる可能性があります。
+- バックグラウンド実行は同時に 1 件だけ実行します。実行中に次のバックアップ時刻へ到達した場合、新しいジョブは開始されません。
 - Codex 実行環境では Blender 実行ファイルが見つからない場合、Blender 5.1.1 の実機 runtime gate はユーザー側で実行してください。

@@ -12,7 +12,21 @@
 - [x] QCDS evaluation exists.
 - [x] Strict QCDS metrics JSON exists and validates.
 - [x] Manual test guide includes working directory, commands, expected result, and URL status.
-- [ ] Blender 5.1.1 runtime gate is passed on a machine with `blender.exe`.
+- [x] Local Issue backlog exists under `Issues/` and is linked from `TODO.md`.
+- [x] Include / exclude glob rules are implemented and covered by unittest.
+- [x] Add-on preferences provide a global default backup location.
+- [x] Destination Layout supports direct ZIP storage and project subfolder ZIP storage.
+- [x] Destination Layout behavior was user-verified on 2026-05-14.
+- [x] Optional background worker support is implemented with timer-thread result application.
+- [x] Runtime gate reports detailed `BLENDER_EXE` diagnostics when Blender is not found.
+- [x] Runtime gate detects the Steam Blender install path at `D:\SteamLibrary\steamapps\common\Blender`.
+- [x] Blender extension manifest passes 5.1.1 validation.
+- [x] Blender 5.1.1 runtime gate is passed on a machine with `blender.exe`.
+- [x] P2 backlog triage is complete and duplicate local Issues are resolved.
+- [x] Release notes exist at `docs/releases/v0.1.0.md`.
+- [x] Release evidence exists at `docs/release-evidence.json`.
+- [x] Docs ZIP includes the release notes, release evidence, and local Issues.
+- [x] GitHub release `v0.1.0` is published with package, docs, test-summary, and runtime-gate assets.
 
 ## Publish notes
 
@@ -20,5 +34,8 @@ The initial public GitHub remote is:
 
 `https://github.com/Sunmax0731/blender-auto-backup`
 
-This repo can be treated as MVP-ready after Blender 5.1.1 runtime gate reports `passed`.
+This repo can be treated as MVP-ready. Blender 5.1.1 runtime gate reports `passed`.
 
+GitHub release:
+
+`https://github.com/Sunmax0731/blender-auto-backup/releases/tag/v0.1.0`

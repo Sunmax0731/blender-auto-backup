@@ -1,5 +1,5 @@
 {
-  "status": "passed_with_runtime_not_run",
+  "status": "passed",
   "steps": [
     {
       "name": "compile_addon",
@@ -8,7 +8,7 @@
     {
       "name": "unittest",
       "status": "passed",
-      "tests": 4
+      "tests": 15
     },
     {
       "name": "package_addon",
@@ -28,7 +28,7 @@
     },
     {
       "name": "runtime_gate",
-      "status": "not_run"
+      "status": "passed"
     }
   ]
 }

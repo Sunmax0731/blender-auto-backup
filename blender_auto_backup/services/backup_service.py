@@ -5,6 +5,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
+from collections.abc import Iterable
+import fnmatch
 import os
 import re
 import zipfile
@@ -12,6 +14,14 @@ import zipfile
 
 class BackupError(RuntimeError):
     """Raised when a backup cannot be created from user-supplied settings."""
+
+
+DESTINATION_MODE_DIRECT = "DIRECT"
+DESTINATION_MODE_SUBFOLDER = "SUBFOLDER"
+_VALID_DESTINATION_MODES = {
+    DESTINATION_MODE_DIRECT,
+    DESTINATION_MODE_SUBFOLDER,
+}
 
 
 @dataclass(frozen=True)
@@ -30,14 +40,25 @@ def run_backup(
     max_backups: int = 20,
     project_label: str | None = None,
     created_at: datetime | None = None,
+    include_globs: str | Iterable[str] | None = None,
+    exclude_globs: str | Iterable[str] | None = None,
+    destination_mode: str = DESTINATION_MODE_DIRECT,
 ) -> BackupResult:
     """Create a ZIP backup and remove older backups beyond max_backups."""
 
     source = _resolve_source(source_directory)
-    backup_dir = _resolve_backup_dir(source, backup_directory)
     keep = _validate_keep_count(max_backups)
     timestamp = created_at or datetime.now()
     label = _safe_label(project_label or source.name or "project")
+    backup_root, backup_dir = _resolve_backup_target(
+        source,
+        backup_directory,
+        destination_mode=destination_mode,
+        label=label,
+    )
+    excluded_dirs = _backup_exclusion_roots(source, backup_root, backup_dir)
+    include_patterns = _normalize_globs(include_globs)
+    exclude_patterns = _normalize_globs(exclude_globs)
 
     backup_dir.mkdir(parents=True, exist_ok=True)
     archive_path = _unique_archive_path(backup_dir, label, timestamp)
@@ -47,13 +68,20 @@ def run_backup(
     byte_count = 0
     try:
         with zipfile.ZipFile(partial_path, "w", compression=zipfile.ZIP_DEFLATED) as archive:
-            for file_path in _iter_source_files(source, backup_dir):
+            for file_path in _iter_source_files(
+                source,
+                excluded_dirs,
+                include_patterns=include_patterns,
+                exclude_patterns=exclude_patterns,
+            ):
                 relative = file_path.relative_to(source)
                 archive_name = Path(source.name) / relative
                 archive.write(file_path, archive_name.as_posix())
                 file_count += 1
                 byte_count += file_path.stat().st_size
         if file_count == 0:
+            if include_patterns or exclude_patterns:
+                raise BackupError(f"source folder has no files matching backup filters: {source}")
             raise BackupError(f"source folder has no files to back up: {source}")
         os.replace(partial_path, archive_path)
     except Exception:
@@ -69,6 +97,26 @@ def run_backup(
         created_at=timestamp,
         deleted_archives=tuple(deleted),
     )
+
+
+def resolve_backup_directory(
+    *,
+    source_directory: str | os.PathLike[str],
+    backup_directory: str | os.PathLike[str] | None = None,
+    project_label: str | None = None,
+    destination_mode: str = DESTINATION_MODE_DIRECT,
+) -> Path:
+    """Return the effective folder where backup ZIP files will be written."""
+
+    source = _resolve_source(source_directory)
+    label = _safe_label(project_label or source.name or "project")
+    _backup_root, backup_dir = _resolve_backup_target(
+        source,
+        backup_directory,
+        destination_mode=destination_mode,
+        label=label,
+    )
+    return backup_dir
 
 
 def cleanup_old_backups(
@@ -106,7 +154,7 @@ def _resolve_source(source_directory: str | os.PathLike[str]) -> Path:
     return source
 
 
-def _resolve_backup_dir(
+def _resolve_backup_root(
     source: Path,
     backup_directory: str | os.PathLike[str] | None,
 ) -> Path:
@@ -120,6 +168,22 @@ def _resolve_backup_dir(
     return backup_dir
 
 
+def _resolve_backup_target(
+    source: Path,
+    backup_directory: str | os.PathLike[str] | None,
+    *,
+    destination_mode: str,
+    label: str,
+) -> tuple[Path, Path]:
+    backup_root = _resolve_backup_root(source, backup_directory)
+    mode = _normalize_destination_mode(destination_mode)
+    backup_dir = backup_root / label if mode == DESTINATION_MODE_SUBFOLDER else backup_root
+    backup_dir = backup_dir.resolve()
+    if backup_dir == source:
+        raise BackupError("resolved backup folder must not be the same as source folder")
+    return backup_root, backup_dir
+
+
 def _validate_keep_count(max_backups: int) -> int:
     try:
         keep = int(max_backups)
@@ -130,13 +194,41 @@ def _validate_keep_count(max_backups: int) -> int:
     return keep
 
 
-def _iter_source_files(source: Path, backup_dir: Path):
-    resolved_backup = backup_dir.resolve()
+def _normalize_destination_mode(value: str) -> str:
+    mode = str(value or DESTINATION_MODE_DIRECT).strip().upper()
+    if mode not in _VALID_DESTINATION_MODES:
+        raise BackupError("destination mode must be DIRECT or SUBFOLDER")
+    return mode
+
+
+def _backup_exclusion_roots(source: Path, backup_root: Path, backup_dir: Path) -> tuple[Path, ...]:
+    roots: list[Path] = []
+    for candidate in (backup_root, backup_dir):
+        resolved = candidate.resolve()
+        if not _is_relative_to(resolved, source):
+            continue
+        if any(existing == resolved or _is_relative_to(resolved, existing) for existing in roots):
+            continue
+        roots = [existing for existing in roots if not _is_relative_to(existing, resolved)]
+        roots.append(resolved)
+    return tuple(roots)
+
+
+def _iter_source_files(
+    source: Path,
+    excluded_dirs: tuple[Path, ...],
+    *,
+    include_patterns: tuple[str, ...] = (),
+    exclude_patterns: tuple[str, ...] = (),
+):
     for path in sorted(source.rglob("*")):
         if path.is_dir():
             continue
         resolved = path.resolve()
-        if _is_relative_to(resolved, resolved_backup):
+        if any(_is_relative_to(resolved, excluded_dir) for excluded_dir in excluded_dirs):
+            continue
+        relative = path.relative_to(source)
+        if not _should_include_file(relative, include_patterns, exclude_patterns):
             continue
         yield path
 
@@ -155,6 +247,50 @@ def _safe_label(value: str) -> str:
     return label or "project"
 
 
+def _normalize_globs(value: str | Iterable[str] | None) -> tuple[str, ...]:
+    if value is None:
+        return ()
+    if isinstance(value, str):
+        raw_patterns = re.split(r"[\r\n;]+", value)
+    else:
+        raw_patterns = value
+
+    patterns: list[str] = []
+    for pattern in raw_patterns:
+        normalized = str(pattern).strip().replace("\\", "/")
+        while normalized.startswith("./"):
+            normalized = normalized[2:]
+        if not normalized or normalized.startswith("#"):
+            continue
+        patterns.append(normalized)
+    return tuple(patterns)
+
+
+def _should_include_file(
+    relative_path: Path,
+    include_patterns: tuple[str, ...],
+    exclude_patterns: tuple[str, ...],
+) -> bool:
+    if include_patterns and not _matches_any_glob(relative_path, include_patterns):
+        return False
+    if exclude_patterns and _matches_any_glob(relative_path, exclude_patterns):
+        return False
+    return True
+
+
+def _matches_any_glob(relative_path: Path, patterns: tuple[str, ...]) -> bool:
+    relative = relative_path.as_posix()
+    name = relative_path.name
+    for pattern in patterns:
+        if pattern.endswith("/"):
+            prefix = pattern.rstrip("/")
+            if relative == prefix or relative.startswith(prefix + "/"):
+                return True
+        if fnmatch.fnmatchcase(relative, pattern) or fnmatch.fnmatchcase(name, pattern):
+            return True
+    return False
+
+
 def _unique_archive_path(backup_dir: Path, label: str, timestamp: datetime) -> Path:
     base = f"{label}-{timestamp.strftime('%Y%m%d-%H%M%S')}"
     candidate = backup_dir / f"{base}.zip"
@@ -163,4 +299,3 @@ def _unique_archive_path(backup_dir: Path, label: str, timestamp: datetime) -> P
         candidate = backup_dir / f"{base}-{suffix:02d}.zip"
         suffix += 1
     return candidate
-
