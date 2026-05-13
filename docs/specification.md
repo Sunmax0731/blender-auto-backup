@@ -15,16 +15,19 @@ Blender 作業中のフォルダを、ユーザーが指定した時間間隔で
 - バックアップ対象フォルダを 1 つ指定できる
 - バックアップ保存先を指定できる
 - 保存先未指定時は対象フォルダ内の `.blender-auto-backup` を使う
+- Add-on Preferences の `Default Backup Folder` が設定されている場合、scene の保存先未指定時はそのフォルダを使う
 - バックアップ形式は ZIP
+- 任意の include / exclude glob で ZIP に入れるファイルを選別できる
+- Exclude glob は include glob より優先される
 - 保持数を超えた古い ZIP は削除する
 - 手動バックアップと timer による自動バックアップを持つ
+- `Run in Background` が有効な場合、手動バックアップと自動バックアップは worker thread で ZIP 作成を実行する
 
 ## Non-goals
 
 - 差分バックアップ
-- バックグラウンド worker
 - クラウド保存
-- UI からの glob include/exclude 編集
+- 複数バックアップ job の同時実行
 
 ## Error handling
 
@@ -32,4 +35,5 @@ Blender 作業中のフォルダを、ユーザーが指定した時間間隔で
 - Backup Folder が Source Folder と同一の場合は拒否する。
 - ZIP 作成中に失敗した場合、`.partial` は削除する。
 - 保存先が Source Folder 内の場合、保存先フォルダ配下は ZIP に含めない。
-
+- Include / exclude glob の結果、対象ファイルが 0 件になった場合はエラーにする。
+- Background worker が実行中の場合、新しい background backup は開始せず status に表示する。

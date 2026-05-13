@@ -5,6 +5,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
+from collections.abc import Iterable
+import fnmatch
 import os
 import re
 import zipfile
@@ -30,6 +32,8 @@ def run_backup(
     max_backups: int = 20,
     project_label: str | None = None,
     created_at: datetime | None = None,
+    include_globs: str | Iterable[str] | None = None,
+    exclude_globs: str | Iterable[str] | None = None,
 ) -> BackupResult:
     """Create a ZIP backup and remove older backups beyond max_backups."""
 
@@ -38,6 +42,8 @@ def run_backup(
     keep = _validate_keep_count(max_backups)
     timestamp = created_at or datetime.now()
     label = _safe_label(project_label or source.name or "project")
+    include_patterns = _normalize_globs(include_globs)
+    exclude_patterns = _normalize_globs(exclude_globs)
 
     backup_dir.mkdir(parents=True, exist_ok=True)
     archive_path = _unique_archive_path(backup_dir, label, timestamp)
@@ -47,13 +53,20 @@ def run_backup(
     byte_count = 0
     try:
         with zipfile.ZipFile(partial_path, "w", compression=zipfile.ZIP_DEFLATED) as archive:
-            for file_path in _iter_source_files(source, backup_dir):
+            for file_path in _iter_source_files(
+                source,
+                backup_dir,
+                include_patterns=include_patterns,
+                exclude_patterns=exclude_patterns,
+            ):
                 relative = file_path.relative_to(source)
                 archive_name = Path(source.name) / relative
                 archive.write(file_path, archive_name.as_posix())
                 file_count += 1
                 byte_count += file_path.stat().st_size
         if file_count == 0:
+            if include_patterns or exclude_patterns:
+                raise BackupError(f"source folder has no files matching backup filters: {source}")
             raise BackupError(f"source folder has no files to back up: {source}")
         os.replace(partial_path, archive_path)
     except Exception:
@@ -130,13 +143,22 @@ def _validate_keep_count(max_backups: int) -> int:
     return keep
 
 
-def _iter_source_files(source: Path, backup_dir: Path):
+def _iter_source_files(
+    source: Path,
+    backup_dir: Path,
+    *,
+    include_patterns: tuple[str, ...] = (),
+    exclude_patterns: tuple[str, ...] = (),
+):
     resolved_backup = backup_dir.resolve()
     for path in sorted(source.rglob("*")):
         if path.is_dir():
             continue
         resolved = path.resolve()
         if _is_relative_to(resolved, resolved_backup):
+            continue
+        relative = path.relative_to(source)
+        if not _should_include_file(relative, include_patterns, exclude_patterns):
             continue
         yield path
 
@@ -155,6 +177,50 @@ def _safe_label(value: str) -> str:
     return label or "project"
 
 
+def _normalize_globs(value: str | Iterable[str] | None) -> tuple[str, ...]:
+    if value is None:
+        return ()
+    if isinstance(value, str):
+        raw_patterns = re.split(r"[\r\n;]+", value)
+    else:
+        raw_patterns = value
+
+    patterns: list[str] = []
+    for pattern in raw_patterns:
+        normalized = str(pattern).strip().replace("\\", "/")
+        while normalized.startswith("./"):
+            normalized = normalized[2:]
+        if not normalized or normalized.startswith("#"):
+            continue
+        patterns.append(normalized)
+    return tuple(patterns)
+
+
+def _should_include_file(
+    relative_path: Path,
+    include_patterns: tuple[str, ...],
+    exclude_patterns: tuple[str, ...],
+) -> bool:
+    if include_patterns and not _matches_any_glob(relative_path, include_patterns):
+        return False
+    if exclude_patterns and _matches_any_glob(relative_path, exclude_patterns):
+        return False
+    return True
+
+
+def _matches_any_glob(relative_path: Path, patterns: tuple[str, ...]) -> bool:
+    relative = relative_path.as_posix()
+    name = relative_path.name
+    for pattern in patterns:
+        if pattern.endswith("/"):
+            prefix = pattern.rstrip("/")
+            if relative == prefix or relative.startswith(prefix + "/"):
+                return True
+        if fnmatch.fnmatchcase(relative, pattern) or fnmatch.fnmatchcase(name, pattern):
+            return True
+    return False
+
+
 def _unique_archive_path(backup_dir: Path, label: str, timestamp: datetime) -> Path:
     base = f"{label}-{timestamp.strftime('%Y%m%d-%H%M%S')}"
     candidate = backup_dir / f"{base}.zip"
@@ -163,4 +229,3 @@ def _unique_archive_path(backup_dir: Path, label: str, timestamp: datetime) -> P
         candidate = backup_dir / f"{base}-{suffix:02d}.zip"
         suffix += 1
     return candidate
-

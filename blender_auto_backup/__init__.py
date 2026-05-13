@@ -22,6 +22,7 @@ def _load_classes():
     from . import operators, panels, properties
 
     return (
+        properties.BlenderAutoBackupPreferences,
         properties.BlenderAutoBackupSettings,
         operators.BLENDER_AUTO_BACKUP_OT_run_now,
         operators.BLENDER_AUTO_BACKUP_OT_start,

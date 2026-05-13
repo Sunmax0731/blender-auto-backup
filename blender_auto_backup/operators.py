@@ -13,6 +13,8 @@ import bpy
 from . import scheduler
 from .services.backup_service import BackupError, run_backup
 
+ADDON_ID = __package__ or "blender_auto_backup"
+
 
 def _settings(context: bpy.types.Context):
     return context.scene.blender_auto_backup
@@ -28,22 +30,52 @@ def _status_time() -> str:
     return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 
-def perform_backup_for_settings(settings) -> str:
-    source_directory = _abspath(settings.source_directory)
-    backup_directory = _abspath(settings.backup_directory) if settings.backup_directory else None
-    result = run_backup(
-        source_directory=source_directory,
-        backup_directory=backup_directory,
-        max_backups=settings.max_backups,
-        project_label=settings.backup_label or None,
-    )
-    settings.last_backup_path = str(result.archive_path)
-    settings.last_run_at = _status_time()
-    settings.last_status = (
+def _addon_preferences():
+    addon = bpy.context.preferences.addons.get(ADDON_ID)
+    return addon.preferences if addon else None
+
+
+def _configured_backup_directory(settings) -> str | None:
+    if settings.backup_directory:
+        return _abspath(settings.backup_directory)
+    preferences = _addon_preferences()
+    default_backup_directory = getattr(preferences, "default_backup_directory", "") if preferences else ""
+    return _abspath(default_backup_directory) if default_backup_directory else None
+
+
+def _backup_kwargs_from_settings(settings) -> dict:
+    return {
+        "source_directory": _abspath(settings.source_directory),
+        "backup_directory": _configured_backup_directory(settings),
+        "max_backups": settings.max_backups,
+        "project_label": settings.backup_label or None,
+        "include_globs": settings.include_globs,
+        "exclude_globs": settings.exclude_globs,
+    }
+
+
+def _success_status(result) -> str:
+    return (
         f"OK: {result.file_count} files, {result.byte_count} bytes -> "
         f"{result.archive_path.name}"
     )
+
+
+def perform_backup_for_settings(settings) -> str:
+    result = run_backup(**_backup_kwargs_from_settings(settings))
+    settings.last_backup_path = str(result.archive_path)
+    settings.last_run_at = _status_time()
+    settings.last_status = _success_status(result)
     return settings.last_status
+
+
+def start_background_backup_for_settings(settings) -> tuple[bool, str]:
+    started = scheduler.start_background_backup(**_backup_kwargs_from_settings(settings))
+    if not started:
+        settings.last_status = "Backup already running in background"
+        return False, settings.last_status
+    settings.last_status = "Backup running in background"
+    return True, settings.last_status
 
 
 class BLENDER_AUTO_BACKUP_OT_run_now(bpy.types.Operator):
@@ -54,6 +86,10 @@ class BLENDER_AUTO_BACKUP_OT_run_now(bpy.types.Operator):
 
     def execute(self, context):
         settings = _settings(context)
+        if settings.use_background_worker:
+            started, message = start_background_backup_for_settings(settings)
+            self.report({"INFO" if started else "WARNING"}, message)
+            return {"FINISHED"} if started else {"CANCELLED"}
         try:
             message = perform_backup_for_settings(settings)
         except BackupError as exc:
@@ -114,7 +150,7 @@ class BLENDER_AUTO_BACKUP_OT_open_backup_folder(bpy.types.Operator):
 
     def execute(self, context):
         settings = _settings(context)
-        target = _abspath(settings.backup_directory) if settings.backup_directory else ""
+        target = _configured_backup_directory(settings) or ""
         if not target and settings.last_backup_path:
             target = str(Path(settings.last_backup_path).parent)
         if not target and settings.source_directory:
@@ -132,4 +168,3 @@ class BLENDER_AUTO_BACKUP_OT_open_backup_folder(bpy.types.Operator):
         else:
             subprocess.Popen(["xdg-open", str(folder)])
         return {"FINISHED"}
-

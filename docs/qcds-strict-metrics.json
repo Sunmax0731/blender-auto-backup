@@ -1,18 +1,35 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-05-14T04:00:00+09:00",
+  "generated_at": "2026-05-14T04:35:09+09:00",
   "project": "blender-auto-backup",
   "ratings": {
-    "Quality": "B+",
+    "Quality": "A-",
     "Cost": "A+",
     "Delivery": "A-",
-    "Satisfaction": "B+"
+    "Satisfaction": "A-"
   },
   "runtime_gate": {
-    "status": "not_run",
+    "status": "passed",
     "gate": "Launch Blender headless, enable the add-on, run the backup operator, and confirm one backup ZIP is created.",
-    "reason": "blender.exe was not found in the Codex environment. User validation target is Blender 5.1.1.",
+    "blender_version": "5.1.1",
+    "blender_exe": "D:\\SteamLibrary\\steamapps\\common\\Blender\\blender.exe",
+    "extension_validate": "passed",
     "command": "npm run runtime:gate"
+  },
+  "backlog_evidence": {
+    "local_issues": "Issues/README.md and Issues/0001-0009",
+    "completed": [
+      "background worker support",
+      "include/exclude glob rules",
+      "global default backup location",
+      "runtime gate BLENDER_EXE diagnostics",
+      "Steam Blender runtime gate detection",
+      "extension manifest tagline validation fix",
+      "Blender 5.1.1 runtime gate",
+      "backlog phase triage",
+      "duplicate issue consolidation"
+    ],
+    "blocked": []
   },
   "artifacts": [
     "dist/blender-auto-backup-0.1.0.zip",
@@ -21,4 +38,3 @@
     "dist/runtime-gate.json"
   ]
 }
-

@@ -13,11 +13,17 @@
 - [x] Add install guide, manual test guide, QCDS, release checklist, and docs ZIP generation.
 - [x] Add strict metrics JSON and validator.
 - [x] Add text integrity check for mojibake markers and control characters.
-- [ ] Run Blender 5.1.1 runtime gate on a machine where `blender.exe` is available.
+- [x] [P3] Run Blender 5.1.1 runtime gate on a machine where `blender.exe` is available. ([Issue 0001](Issues/0001-blender-511-runtime-gate.md))
 
 ## Deferred backlog
 
-- [ ] Add background worker support for very large project folders.
-- [ ] Add optional include/exclude glob rules.
-- [ ] Add add-on preferences for global default backup location.
+- [x] [P3] Detect Steam Blender installs and directory-valued `BLENDER_EXE`. ([Issue 0006](Issues/0006-runtime-gate-steam-blender-detection.md))
+- [x] [P3] Fix Blender extension manifest tagline validation failure. ([Issue 0007](Issues/0007-extension-manifest-tagline-validation.md))
+- [x] [P3] Improve runtime gate diagnostics when `BLENDER_EXE` is set but not found. ([Issue 0005](Issues/0005-runtime-gate-blender-exe-diagnostics.md))
+- [x] [P3] Add background worker support for very large project folders. ([Issue 0002](Issues/0002-background-worker-support.md))
+- [x] [P3] Add optional include/exclude glob rules. ([Issue 0003](Issues/0003-include-exclude-glob-rules.md))
+- [x] [P3] Add add-on preferences for global default backup location. ([Issue 0004](Issues/0004-global-default-backup-location.md))
 
+## Work Items
+- [x] [P2] 未整理課題のフェーズ振り分け [Issue](Issues/0008-issue.md) [QCDS:Cost,Delivery]
+- [x] [P2] 未整理課題のフェーズ振り分け（0008 に統合） [Issue](Issues/0009-issue.md) [QCDS:Cost,Delivery]

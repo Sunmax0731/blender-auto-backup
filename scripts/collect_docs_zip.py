@@ -16,11 +16,23 @@ DOC_FILES = [
     "docs/manual-test.md",
     "docs/specification.md",
     "docs/architecture.md",
+    "docs/backlog-triage.md",
     "docs/test-plan.md",
     "docs/qcds-evaluation.md",
     "docs/qcds-strict-metrics.json",
     "docs/release-checklist.md",
 ]
+
+
+def iter_doc_files() -> list[str]:
+    files = list(DOC_FILES)
+    issues_dir = ROOT / "Issues"
+    if issues_dir.exists():
+        files.extend(
+            path.relative_to(ROOT).as_posix()
+            for path in sorted(issues_dir.glob("*.md"))
+        )
+    return files
 
 
 def main() -> None:
@@ -29,7 +41,7 @@ def main() -> None:
     if archive_path.exists():
         archive_path.unlink()
     with zipfile.ZipFile(archive_path, "w", compression=zipfile.ZIP_DEFLATED) as archive:
-        for relative in DOC_FILES:
+        for relative in iter_doc_files():
             path = ROOT / relative
             if not path.exists():
                 raise FileNotFoundError(path)
@@ -39,4 +51,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

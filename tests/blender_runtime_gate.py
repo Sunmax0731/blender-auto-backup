@@ -30,6 +30,7 @@ def main() -> None:
         settings.backup_directory = str(backup_dir)
         settings.interval_minutes = 1
         settings.max_backups = 5
+        settings.use_background_worker = False
 
         result = bpy.ops.blender_auto_backup.run_now()
         if result != {"FINISHED"}:
@@ -50,4 +51,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
