@@ -4,7 +4,7 @@
 
 - `blender_auto_backup/services/backup_service.py`
   - Blender API に依存しないコア処理
-  - 入力検証、glob filter 判定、ZIP 作成、保存先除外、保持数整理
+  - 入力検証、glob filter 判定、保存先レイアウト解決、ZIP 作成、保存先除外、保持数整理
 - `blender_auto_backup/properties.py`
   - Scene に保存される設定と add-on preferences
 - `blender_auto_backup/operators.py`
@@ -36,11 +36,12 @@ MVP は Option A を採用する。P3 backlog では Option A のまま任意の
 
 ## Data flow
 
-1. User sets Source Folder, Backup Folder, Interval, Max Backups.
+1. User sets Source Folder, Backup Folder, Destination Layout, Interval, Max Backups.
 2. If Backup Folder is empty, operators resolve add-on preference `Default Backup Folder`; if that is empty, the service uses `.blender-auto-backup` under Source Folder.
-3. Operator or timer calls `run_backup` directly, or starts a worker that calls `run_backup`.
-4. Service validates folders and include / exclude globs.
-5. Service writes `label-yyyymmdd-hhmmss.zip.partial`.
-6. Service replaces it with `.zip`.
-7. Service deletes old matching ZIP files beyond `Max Backups`.
-8. Operator or timer updates panel status.
+3. If Destination Layout is `Subfolder`, the service creates a safe project-label subfolder under the effective backup folder and writes ZIP files there.
+4. Operator or timer calls `run_backup` directly, or starts a worker that calls `run_backup`.
+5. Service validates folders and include / exclude globs.
+6. Service writes `label-yyyymmdd-hhmmss.zip.partial`.
+7. Service replaces it with `.zip`.
+8. Service deletes old matching ZIP files beyond `Max Backups`.
+9. Operator or timer updates panel status.

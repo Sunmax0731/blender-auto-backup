@@ -28,6 +28,7 @@ class BackupJobRequest:
     project_label: str | None
     include_globs: str
     exclude_globs: str
+    destination_mode: str
 
 
 @dataclass(frozen=True)
@@ -68,6 +69,7 @@ def start_background_backup(
     project_label: str | None,
     include_globs: str,
     exclude_globs: str,
+    destination_mode: str,
 ) -> bool:
     global _worker_thread
     request = BackupJobRequest(
@@ -77,6 +79,7 @@ def start_background_backup(
         project_label=project_label,
         include_globs=include_globs,
         exclude_globs=exclude_globs,
+        destination_mode=destination_mode,
     )
     with _worker_lock:
         if _worker_thread is not None and _worker_thread.is_alive():
@@ -115,6 +118,7 @@ def _run_background_backup(request: BackupJobRequest) -> None:
             project_label=request.project_label,
             include_globs=request.include_globs,
             exclude_globs=request.exclude_globs,
+            destination_mode=request.destination_mode,
         )
         outcome = BackupJobOutcome(status="passed", result=result, finished_at=datetime.now())
     except BackupError as exc:

@@ -16,6 +16,14 @@ class BackupError(RuntimeError):
     """Raised when a backup cannot be created from user-supplied settings."""
 
 
+DESTINATION_MODE_DIRECT = "DIRECT"
+DESTINATION_MODE_SUBFOLDER = "SUBFOLDER"
+_VALID_DESTINATION_MODES = {
+    DESTINATION_MODE_DIRECT,
+    DESTINATION_MODE_SUBFOLDER,
+}
+
+
 @dataclass(frozen=True)
 class BackupResult:
     archive_path: Path
@@ -34,14 +42,21 @@ def run_backup(
     created_at: datetime | None = None,
     include_globs: str | Iterable[str] | None = None,
     exclude_globs: str | Iterable[str] | None = None,
+    destination_mode: str = DESTINATION_MODE_DIRECT,
 ) -> BackupResult:
     """Create a ZIP backup and remove older backups beyond max_backups."""
 
     source = _resolve_source(source_directory)
-    backup_dir = _resolve_backup_dir(source, backup_directory)
     keep = _validate_keep_count(max_backups)
     timestamp = created_at or datetime.now()
     label = _safe_label(project_label or source.name or "project")
+    backup_root, backup_dir = _resolve_backup_target(
+        source,
+        backup_directory,
+        destination_mode=destination_mode,
+        label=label,
+    )
+    excluded_dirs = _backup_exclusion_roots(source, backup_root, backup_dir)
     include_patterns = _normalize_globs(include_globs)
     exclude_patterns = _normalize_globs(exclude_globs)
 
@@ -55,7 +70,7 @@ def run_backup(
         with zipfile.ZipFile(partial_path, "w", compression=zipfile.ZIP_DEFLATED) as archive:
             for file_path in _iter_source_files(
                 source,
-                backup_dir,
+                excluded_dirs,
                 include_patterns=include_patterns,
                 exclude_patterns=exclude_patterns,
             ):
@@ -82,6 +97,26 @@ def run_backup(
         created_at=timestamp,
         deleted_archives=tuple(deleted),
     )
+
+
+def resolve_backup_directory(
+    *,
+    source_directory: str | os.PathLike[str],
+    backup_directory: str | os.PathLike[str] | None = None,
+    project_label: str | None = None,
+    destination_mode: str = DESTINATION_MODE_DIRECT,
+) -> Path:
+    """Return the effective folder where backup ZIP files will be written."""
+
+    source = _resolve_source(source_directory)
+    label = _safe_label(project_label or source.name or "project")
+    _backup_root, backup_dir = _resolve_backup_target(
+        source,
+        backup_directory,
+        destination_mode=destination_mode,
+        label=label,
+    )
+    return backup_dir
 
 
 def cleanup_old_backups(
@@ -119,7 +154,7 @@ def _resolve_source(source_directory: str | os.PathLike[str]) -> Path:
     return source
 
 
-def _resolve_backup_dir(
+def _resolve_backup_root(
     source: Path,
     backup_directory: str | os.PathLike[str] | None,
 ) -> Path:
@@ -133,6 +168,22 @@ def _resolve_backup_dir(
     return backup_dir
 
 
+def _resolve_backup_target(
+    source: Path,
+    backup_directory: str | os.PathLike[str] | None,
+    *,
+    destination_mode: str,
+    label: str,
+) -> tuple[Path, Path]:
+    backup_root = _resolve_backup_root(source, backup_directory)
+    mode = _normalize_destination_mode(destination_mode)
+    backup_dir = backup_root / label if mode == DESTINATION_MODE_SUBFOLDER else backup_root
+    backup_dir = backup_dir.resolve()
+    if backup_dir == source:
+        raise BackupError("resolved backup folder must not be the same as source folder")
+    return backup_root, backup_dir
+
+
 def _validate_keep_count(max_backups: int) -> int:
     try:
         keep = int(max_backups)
@@ -143,19 +194,38 @@ def _validate_keep_count(max_backups: int) -> int:
     return keep
 
 
+def _normalize_destination_mode(value: str) -> str:
+    mode = str(value or DESTINATION_MODE_DIRECT).strip().upper()
+    if mode not in _VALID_DESTINATION_MODES:
+        raise BackupError("destination mode must be DIRECT or SUBFOLDER")
+    return mode
+
+
+def _backup_exclusion_roots(source: Path, backup_root: Path, backup_dir: Path) -> tuple[Path, ...]:
+    roots: list[Path] = []
+    for candidate in (backup_root, backup_dir):
+        resolved = candidate.resolve()
+        if not _is_relative_to(resolved, source):
+            continue
+        if any(existing == resolved or _is_relative_to(resolved, existing) for existing in roots):
+            continue
+        roots = [existing for existing in roots if not _is_relative_to(existing, resolved)]
+        roots.append(resolved)
+    return tuple(roots)
+
+
 def _iter_source_files(
     source: Path,
-    backup_dir: Path,
+    excluded_dirs: tuple[Path, ...],
     *,
     include_patterns: tuple[str, ...] = (),
     exclude_patterns: tuple[str, ...] = (),
 ):
-    resolved_backup = backup_dir.resolve()
     for path in sorted(source.rglob("*")):
         if path.is_dir():
             continue
         resolved = path.resolve()
-        if _is_relative_to(resolved, resolved_backup):
+        if any(_is_relative_to(resolved, excluded_dir) for excluded_dir in excluded_dirs):
             continue
         relative = path.relative_to(source)
         if not _should_include_file(relative, include_patterns, exclude_patterns):

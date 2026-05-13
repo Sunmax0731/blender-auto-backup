@@ -35,6 +35,15 @@ class BlenderAutoBackupSettings(bpy.types.PropertyGroup):
         subtype="DIR_PATH",
         default="",
     )
+    backup_destination_mode: bpy.props.EnumProperty(
+        name="Destination Layout",
+        description="Choose whether ZIP files are saved directly in Backup Folder or inside a project subfolder",
+        items=(
+            ("DIRECT", "Direct", "Save ZIP files directly in Backup Folder"),
+            ("SUBFOLDER", "Subfolder", "Create a project subfolder in Backup Folder and save ZIP files there"),
+        ),
+        default="DIRECT",
+    )
     backup_label: bpy.props.StringProperty(
         name="Backup Label",
         description="Optional file-name label. Empty uses the source folder name.",

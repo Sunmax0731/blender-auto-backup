@@ -26,6 +26,7 @@ class BLENDER_AUTO_BACKUP_PT_scene_panel(bpy.types.Panel):
 
         layout.prop(settings, "source_directory")
         layout.prop(settings, "backup_directory")
+        layout.prop(settings, "backup_destination_mode", expand=True)
         if not settings.backup_directory:
             default_backup_directory = _default_backup_directory()
             if default_backup_directory:

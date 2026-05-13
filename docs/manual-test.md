@@ -35,9 +35,10 @@ npm test
 5. Scene Properties > `Auto Backup` を開く。
 6. `Source Folder` に一時フォルダを指定する。
 7. `Backup Folder` を空のままにする。
-8. `Max Backups` を `2` にする。
-9. `Run in Background` を off にする。
-10. `Backup Now` を押す。
+8. `Destination Layout` を `Direct` にする。
+9. `Max Backups` を `2` にする。
+10. `Run in Background` を off にする。
+11. `Backup Now` を押す。
 
 期待結果:
 
@@ -46,6 +47,31 @@ npm test
 - ZIP 内に `scene.blend` と `notes.txt` が入っている
 - ZIP 内に `.blender-auto-backup` は含まれない
 - `Last` 表示が `OK:` で始まる
+
+## Subfolder destination layout シナリオ
+
+1. `Backup Folder` に一時保存先フォルダを指定する。
+2. `Destination Layout` を `Subfolder` にする。
+3. `Backup Label` を空にする。
+4. `Backup Now` を押す。
+
+期待結果:
+
+- `Backup Folder\SourceFolderName` が作成される
+- `Backup Folder\SourceFolderName\SourceFolderName-yyyymmdd-hhmmss.zip` が作成される
+- `Backup Folder` 直下には新しい ZIP が直接作成されない
+- Scene 側の `Last` 表示が `OK:` で始まる
+
+作業フォルダ内の保存先除外確認:
+
+1. `Backup Folder` に `Source Folder\Backups` を指定する。
+2. `Destination Layout` を `Subfolder` にする。
+3. `Backup Now` を押す。
+
+期待結果:
+
+- `Source Folder\Backups\SourceFolderName` に ZIP が作成される
+- ZIP 内に `Backups` フォルダ配下のファイルは含まれない
 
 ## Global default backup folder シナリオ
 

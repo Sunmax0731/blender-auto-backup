@@ -8,7 +8,7 @@
     {
       "name": "unittest",
       "status": "passed",
-      "tests": 12
+      "tests": 15
     },
     {
       "name": "package_addon",

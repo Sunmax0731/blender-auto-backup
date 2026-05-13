@@ -11,7 +11,7 @@ import sys
 import bpy
 
 from . import scheduler
-from .services.backup_service import BackupError, run_backup
+from .services.backup_service import BackupError, resolve_backup_directory, run_backup
 
 ADDON_ID = __package__ or "blender_auto_backup"
 
@@ -43,6 +43,28 @@ def _configured_backup_directory(settings) -> str | None:
     return _abspath(default_backup_directory) if default_backup_directory else None
 
 
+def _destination_mode(settings) -> str:
+    return getattr(settings, "backup_destination_mode", "DIRECT")
+
+
+def _effective_backup_directory(settings) -> str | None:
+    source = _abspath(settings.source_directory)
+    configured = _configured_backup_directory(settings)
+    if not source:
+        return configured
+    try:
+        return str(
+            resolve_backup_directory(
+                source_directory=source,
+                backup_directory=configured,
+                project_label=settings.backup_label or None,
+                destination_mode=_destination_mode(settings),
+            )
+        )
+    except BackupError:
+        return configured
+
+
 def _backup_kwargs_from_settings(settings) -> dict:
     return {
         "source_directory": _abspath(settings.source_directory),
@@ -51,6 +73,7 @@ def _backup_kwargs_from_settings(settings) -> dict:
         "project_label": settings.backup_label or None,
         "include_globs": settings.include_globs,
         "exclude_globs": settings.exclude_globs,
+        "destination_mode": _destination_mode(settings),
     }
 
 
@@ -150,7 +173,7 @@ class BLENDER_AUTO_BACKUP_OT_open_backup_folder(bpy.types.Operator):
 
     def execute(self, context):
         settings = _settings(context)
-        target = _configured_backup_directory(settings) or ""
+        target = _effective_backup_directory(settings) or ""
         if not target and settings.last_backup_path:
             target = str(Path(settings.last_backup_path).parent)
         if not target and settings.source_directory:

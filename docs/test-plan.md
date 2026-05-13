@@ -26,6 +26,9 @@ Expected result:
 - ZIP is created from a source folder
 - Nested files are included
 - Backup folder inside source folder is excluded
+- Subfolder destination layout writes ZIP files under `Backup Folder/<safe label>`
+- Subfolder destination layout excludes the configured backup root when it is inside the source folder
+- Unknown destination layout values fail before ZIP creation
 - `.partial` files are not left after success
 - Missing source folder fails
 - Source and backup folder cannot be identical

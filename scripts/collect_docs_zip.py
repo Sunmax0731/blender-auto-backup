@@ -21,6 +21,8 @@ DOC_FILES = [
     "docs/qcds-evaluation.md",
     "docs/qcds-strict-metrics.json",
     "docs/release-checklist.md",
+    "docs/release-evidence.json",
+    "docs/releases/v0.1.0.md",
 ]
 
 

@@ -38,6 +38,60 @@ class BackupServiceTests(unittest.TestCase):
             self.assertNotIn("work/.blender-auto-backup/old.zip", names)
             self.assertFalse(list(backup_dir.glob("*.partial")))
 
+    def test_run_backup_can_store_zip_in_project_subfolder(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_root:
+            root = Path(temp_root)
+            source = root / "work"
+            source.mkdir()
+            (source / "scene.blend").write_bytes(b"blend")
+            backup_root = root / "backups"
+
+            result = run_backup(
+                source_directory=source,
+                backup_directory=backup_root,
+                destination_mode="SUBFOLDER",
+                created_at=datetime(2026, 5, 14, 12, 0, 0),
+            )
+
+            self.assertEqual(result.archive_path.parent, backup_root / "work")
+            self.assertEqual(result.archive_path.name, "work-20260514-120000.zip")
+            with zipfile.ZipFile(result.archive_path) as archive:
+                names = set(archive.namelist())
+            self.assertEqual(names, {"work/scene.blend"})
+
+    def test_run_backup_subfolder_mode_excludes_backup_root_inside_source(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_root:
+            source = Path(temp_root) / "work"
+            source.mkdir()
+            (source / "scene.blend").write_bytes(b"blend")
+            backup_root = source / "Backups"
+            current_destination = backup_root / "work"
+            current_destination.mkdir(parents=True)
+            (current_destination / "old.zip").write_bytes(b"old")
+            (backup_root / "other.zip").write_bytes(b"other")
+
+            result = run_backup(
+                source_directory=source,
+                backup_directory=backup_root,
+                destination_mode="SUBFOLDER",
+                created_at=datetime(2026, 5, 14, 12, 0, 0),
+            )
+
+            self.assertEqual(result.file_count, 1)
+            with zipfile.ZipFile(result.archive_path) as archive:
+                names = set(archive.namelist())
+            self.assertEqual(names, {"work/scene.blend"})
+            self.assertFalse(any(name.startswith("work/Backups/") for name in names))
+
+    def test_run_backup_rejects_unknown_destination_mode(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_root:
+            source = Path(temp_root) / "work"
+            source.mkdir()
+            (source / "scene.blend").write_bytes(b"blend")
+
+            with self.assertRaisesRegex(BackupError, "destination mode"):
+                run_backup(source_directory=source, destination_mode="ARCHIVE_ROOT")
+
     def test_run_backup_keeps_newest_archives(self) -> None:
         with tempfile.TemporaryDirectory() as temp_root:
             root = Path(temp_root)

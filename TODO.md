@@ -45,3 +45,7 @@ No current standalone TODO. Design evidence is maintained in `docs/architecture.
 - [x] Add install guide, manual test guide, QCDS, release checklist, and docs ZIP generation. [phase=06-release]
 - [x] Add strict metrics JSON and validator. [phase=06-release]
 - [x] [P3] Fix Blender extension manifest tagline validation failure. ([Issue 0007](Issues/0007-extension-manifest-tagline-validation.md)) [phase=06-release]
+
+## Work Items
+- [x] [P2] バックアップ保存先のサブフォルダ方式を追加 [Issue](Issues/0010-issue.md) [phase=04-implementation] [QCDS:Quality,Satisfaction]
+- [x] [P2] リリース資料整備とGitHubリリース [Issue](Issues/0011-github.md) [phase=06-release] [QCDS:Quality,Delivery,Satisfaction]
