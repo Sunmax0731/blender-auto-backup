@@ -2,6 +2,7 @@
 
 - Priority: P3
 - Status: done
+- Phase: 06-release
 - Linked TODO: [TODO.md](../TODO.md)
 
 ## Contract

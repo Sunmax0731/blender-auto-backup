@@ -23,11 +23,14 @@ If a local issue is an exact duplicate, keep the issue file for traceability, ma
 
 ## Issue Template
 
+When creating a real issue, replace `status-value` with one of the status values above and convert `todo:` checklist placeholders into normal Markdown checkboxes.
+
 ```markdown
 # 0000 Title
 
 - Priority: P3
-- Status: open
+- Status: status-value
+- Phase: 00-inbox
 - Linked TODO: ../TODO.md
 
 ## Contract
@@ -36,10 +39,10 @@ Describe the expected outcome.
 
 ## Checklist
 
-- [ ] Implementation
-- [ ] Tests
-- [ ] Docs
-- [ ] QCDS evidence
+- todo: Implementation
+- todo: Tests
+- todo: Docs
+- todo: QCDS evidence
 
 ## Evidence
 
